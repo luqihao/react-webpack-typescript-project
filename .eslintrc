@@ -1,0 +1,113 @@
+
+{
+	// 要在配置文件中指定环境，请使用env键并通过将每个设置为来指定要启用的环境true。
+	// 例如，以下启用浏览器和Node.js环境：
+	// es6表示对于新的ES6全局变量，比如Set的支持，注意跟下面parserOptions的ecmaVersion对比一下
+	// ecmaVersion: 6 表示启用对于ES6语法的校验
+	//
+	"env": {
+		"browser": true,
+		"es6": true,
+		"node": true
+	},
+	//
+	"extends": [
+		"airbnb",
+		"airbnb/hooks",
+		"plugin:react/recommended",
+		"plugin:promise/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended"
+	],
+	// 指定解析器
+	// 默认情况下，ESLint使用Espree作为其解析器。您可以选择指定在配置文件中使用其他解析器
+	"parser": "@typescript-eslint/parser",
+	// parserOptions属性在文件中设置解析器选项
+	// ecmaVersion-设置为3、5（默认），6、7、8、9、10或11，以指定要使用的ECMAScript语法的版本。
+	// sourceType-设置为"script"（默认），或者"module"代码在ECMAScript模块中。
+	// ecmaFeatures -一个对象，指示您要使用哪些其他语言功能,参数如下
+	//   globalReturn-允许return在全局声明
+	//   impliedStrict-启用全局严格模式（如果ecmaVersion大于等于5）
+	//   jsx-启用JSX
+	"parserOptions": {
+		"ecmaFeatures": {
+			"impliedStrict": true,
+			"jsx": true
+		},
+		"ecmaVersion": 12,
+		"sourceType": "module"
+	},
+	"plugins": ["react", "promise", "@typescript-eslint", "prettier"],
+	"settings": {
+		// 这里的improt/resolver针对插件是eslint-import-resolver-xxx
+		// 比如下面的typescript里的规则，针对的就是插件eslint-import-resolver-typescript
+		// 再下面的node就是配置eslint-import-resolver-node
+		// 有人说我们没依赖eslint-import-resolver-node，哪里来的呢，是因为
+		// eslint-import-plugin插件依赖，所以也安装了它，这就要涉及到npm依赖包平铺的规则了，下面会讲
+		"import/resolver": {
+			"typescript": {
+				"project": "./tsconfig.json" // 这里主要解决的是别名的问题，tsconfig.json里有别名设置
+			},
+			"node": {
+				"extensions": [".tsx", ".jsx", ".ts", ".js"]
+			}
+		}
+	},
+	"rules": {
+		// 以下规则就不详细讲了，因为很多都是因为typescript插件bug跟eslint冲突不得不关闭一些规则
+		"import/extensions": [
+			2,
+			"ignorePackages",
+			{
+				"ts": "never",
+				"tsx": "never",
+				"js": "never"
+			}
+		],
+		"import/no-extraneous-dependencies": [2, { "devDependencies": true }],
+		"import/prefer-default-export": 0,
+		"import/no-unresolved": 2,
+		"import/no-dynamic-require": 0,
+		"@typescript-eslint/no-useless-constructor": 2,
+		"@typescript-eslint/no-empty-function": 1,
+		"@typescript-eslint/no-var-requires": 0,
+		"@typescript-eslint/explicit-function-return-type": 0,
+		"@typescript-eslint/explicit-module-boundary-types": 0,
+		"@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/no-use-before-define": 2,
+		"@typescript-eslint/no-unused-vars": 0,
+		"no-unused-vars": 0,
+
+		"react/jsx-filename-extension": [
+			2,
+			{ "extensions": [".tsx", "ts", ".jsx", "js"] }
+		],
+		"react/jsx-indent-props": [0, 0],
+		"react/jsx-indent": [0, 0],
+		"react/jsx-one-expression-per-line": 0,
+		"react/destructuring-assignment": 0,
+		"react/state-in-constructor": 0,
+		"react/jsx-props-no-spreading": 0,
+		"react/prop-types": 0,
+		"jsx-a11y/click-events-have-key-events": 0,
+		"jsx-a11y/no-noninteractive-element-interactions": 0,
+		"jsx-a11y/no-static-element-interactions": 0,
+		"lines-between-class-members": [2, "always"],
+		// indent: [2, 2, { SwitchCase: 1 }],
+		"linebreak-style": [2, "unix"],
+		"quotes": [2, "single"],
+		"no-unused-expressions": 0,
+		"no-plusplus": 0,
+		"no-console": 0,
+		"class-methods-use-this": 2,
+		"jsx-quotes": [2, "prefer-single"],
+		"global-require": 0,
+		"no-use-before-define": 0,
+		"no-restricted-syntax": 0,
+		"no-continue": 0,
+		"no-shadow": 0,
+		// "react-hooks/exhaustive-deps": 0,
+		"jsx-a11y/alt-text": 0,
+		"react/no-unknown-property": 0
+	}
+}

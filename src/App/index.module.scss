@@ -1,0 +1,42 @@
+@font-face {
+	font-family: 'my-font';
+	src: url('../assets/fonts/anti_theft.ttf');
+}
+
+.app {
+	color: $color-primary;
+	font-size: $default-font-size;
+	font-family: 'my-font'; 
+
+	:global {
+		img {
+			border: 10px solid #000;
+		}
+	}
+
+	&:hover {
+		color: red;
+	}
+}
+
+.img {
+	position: absolute;
+	width: 300px;
+	height: 200px;
+	background-image: url('./../assets/images/test.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.svg {
+	width: 300px;
+	height: 200px;
+	background-image: url('./../assets/svgs/commentIcon.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.text {
+	width: 100px;
+	@include textEllipsis;
+}
