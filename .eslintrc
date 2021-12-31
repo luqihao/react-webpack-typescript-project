@@ -100,7 +100,7 @@
 		"no-plusplus": 0,
 		"no-console": 0,
 		"class-methods-use-this": 2,
-		"jsx-quotes": [2, "prefer-single"],
+		"jsx-quotes": [2, "prefer-double"],
 		"global-require": 0,
 		"no-use-before-define": 0,
 		"no-restricted-syntax": 0,
@@ -108,6 +108,7 @@
 		"no-shadow": 0,
 		// "react-hooks/exhaustive-deps": 0,
 		"jsx-a11y/alt-text": 0,
-		"react/no-unknown-property": 0
+		"react/no-unknown-property": 0,
+		"prettier/prettier": 0
 	}
 }
