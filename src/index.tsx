@@ -1,7 +1,10 @@
 import React, { lazy, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Route, Routes, HashRouter } from 'react-router-dom'
+import { getEnv } from '@contants/index'
 // import loadable from '@loadable/component'
+
+getEnv()
 
 // import App from '@Components/App'
 // import NotFound from '@Components/NotFound'

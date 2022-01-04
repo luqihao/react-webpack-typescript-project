@@ -1,13 +1,17 @@
 const path = require('path')
+const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
-module.exports = env => {
+module.exports = (env, ...rest) => {
+	console.log('env', env)
+	console.log('rest', rest)
 	const IS_DEV = env.development
 	const IS_PROD = env.production
+	const { APP_ENV } = env
 
 	return {
 		devtool: IS_DEV ? 'source-map' : false,
@@ -120,21 +124,21 @@ module.exports = env => {
 						},
 					},
 					generator: {
-						filename: 'images/[name]_[contenthash][ext][query]',
+						filename: 'images/[name]_[contenthash:8][ext][query]',
 					},
 				},
 				{
 					test: /\.(eot|svg|ttf|woff|woff2?)$/,
 					type: 'asset/resource', // webpack5自带的loader，webpack4依赖file-loader
 					generator: {
-						filename: 'fonts/[name]_[contenthash][ext][query]',
+						filename: 'fonts/[name]_[contenthash:8][ext][query]',
 					},
 				},
 				{
 					test: /\.(svg)$/,
 					type: 'asset/resource', // webpack5自带的loader，webpack4依赖file-loader
 					generator: {
-						filename: 'svgs/[name]_[contenthash][ext][query]',
+						filename: 'svgs/[name]_[contenthash:8][ext][query]',
 					},
 				},
 			],
@@ -150,8 +154,8 @@ module.exports = env => {
 			],
 		},
 		output: {
-			// contenthash，只要模块内容不变，hash值就不变，打包也就更快
-			filename: 'js/[name].[contenthash].js',
+			// contenthash:8，只要模块内容不变，hash值就不变，打包也就更快
+			filename: 'js/[name].[contenthash:8].js',
 			path: path.resolve(__dirname, '../dist'),
 			clean: true,
 		},
@@ -163,12 +167,21 @@ module.exports = env => {
 				// 与 webpackOptions.output 中的选项相似
 				// 所有的选项都是可选的
 				filename: IS_PROD
-					? 'css/[name].[contenthash].css'
+					? 'css/[name].[contenthash:8].css'
 					: '[name].css',
 				chunkFilename: IS_PROD
-					? 'css/[name].[id].[contenthash].css'
-					: '[name].[id].[contenthash].css',
+					? 'css/[name].[id].[contenthash:8].css'
+					: '[name].[id].[contenthash:8].css',
 				ignoreOrder: true,
+			}),
+			// webpack5移除了process之类的（说是process是属于node，前端不应该有这个东西）
+			// 需要自己定义环境变量，然后就可以通过代码访问了
+			new webpack.DefinePlugin({
+				IS_DEV,
+				IS_PROD,
+				// 当前分支，区分生产环境、预生产环境、测试环境
+				// 为何要用JSON.stringfy，请看https://webpack.docschina.org/plugins/define-plugin
+				APP_ENV: JSON.stringify(APP_ENV),
 			}),
 		],
 		devServer: {
@@ -197,13 +210,10 @@ module.exports = env => {
 							comments: true,
 						},
 						compress: {
-							pure_funcs: ['console.log'],
 							// 删除未引用的函数和变量
 							unused: true,
 							// 删掉 debugger
 							drop_debugger: true,
-							// 移除 console
-							drop_console: true,
 							// 删除无法访问的代码
 							dead_code: true,
 							unsafe_undefined: true,
