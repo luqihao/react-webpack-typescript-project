@@ -7,7 +7,7 @@ function Page11() {
 	const { number } = useParams()
 	return (
 		<div className={styles.page}>
-			Page11
+			Page11哈哈哈哈
 			<div>number: {number}</div>
 		</div>
 	)

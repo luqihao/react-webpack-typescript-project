@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
 module.exports = env => {
 	const IS_DEV = env.development
@@ -12,6 +13,16 @@ module.exports = env => {
 		devtool: IS_DEV ? 'source-map' : false,
 		entry: {
 			index: ['./src/index.tsx'],
+			// testSplit: ['./src/test_split.tsx'],
+			// index: {
+			// 	import: './src/index.tsx',
+			// 	dependOn: 'shared',
+			// },
+			// testSplit: {
+			// 	import: './src/test_split.tsx',
+			// 	dependOn: 'shared',
+			// },
+			// shared: ['lodash', 'react'],
 		},
 		module: {
 			rules: [
@@ -129,10 +140,18 @@ module.exports = env => {
 			],
 		},
 		resolve: {
-			extensions: ['.tsx', '.ts', '.js'],
+			extensions: ['.ts', '.tsx', '.js', '.jsx'],
+			plugins: [
+				// 使用tsconfig里面配置的paths而不需要再重新配置alias
+				new TsconfigPathsPlugin({
+					configFile: path.resolve(__dirname, '../tsconfig.json'),
+					extensions: ['.ts', '.tsx', '.js', '.jsx'],
+				}),
+			],
 		},
 		output: {
-			filename: 'js/[name].[chunkhash].js',
+			// contenthash，只要模块内容不变，hash值就不变，打包也就更快
+			filename: 'js/[name].[contenthash].js',
 			path: path.resolve(__dirname, '../dist'),
 			clean: true,
 		},
@@ -169,7 +188,6 @@ module.exports = env => {
 		},
 		optimization: {
 			concatenateModules: false,
-			minimize: true,
 			minimizer: [
 				new TerserPlugin({
 					extractComments: false,
@@ -198,7 +216,18 @@ module.exports = env => {
 				// 这个是重点下面讲
 				chunks: 'all',
 				minSize: 0,
+				cacheGroups: {
+					vendor: {
+						// 创建一个 custom vendor chunk，其中包含与 RegExp 匹配的某些 node_modules 包
+						test: /[\\/]node_modules[\\/](react|react-dom|lodash|moment|mobx|mobx-react|axios)[\\/]/,
+						name: 'vendors',
+						chunks: 'all',
+					},
+				},
 			},
+			runtimeChunk: 'single',
+			moduleIds: 'deterministic',
+			removeAvailableModules: false,
 		},
 	}
 }

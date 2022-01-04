@@ -10,5 +10,15 @@
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "skipLibCheck": true, // 忽略所有的声明文件（ *.d.ts）的类型检查
+        "baseUrl": "./src",
+        "paths": {
+            "@assets/*": ["assets/*"],
+            "@components/*": [
+                "components/*"
+            ],
+            "@styles/*": [
+                "styles/*"
+            ],
+        }
     }
 }

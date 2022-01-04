@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 
+import testImg from '@assets/images/test.png'
+import testSVG from '@assets/svgs/commentIcon.svg'
 import styles from './index.module.scss'
-import testImg from '../../assets/images/test.png'
-import testSVG from '../../assets/svgs/commentIcon.svg'
 
 function App() {
 	const str = '1234'
