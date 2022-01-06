@@ -13,6 +13,39 @@ module.exports = (env, ...rest) => {
 	const IS_PROD = env.production
 	const { APP_ENV } = env
 
+	const getCssLoaders = importLoaders => [
+		IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
+		{
+			loader: 'css-loader',
+			options: {
+				modules: true,
+				sourceMap: IS_DEV,
+				importLoaders,
+			},
+		},
+		{
+			loader: 'postcss-loader',
+			options: {
+				postcssOptions: {
+					plugins: [
+						require('postcss-flexbugs-fixes'),
+						IS_PROD && [
+							// 开发环境不使用postcss-preset-env加浏览器前缀，加快打包时间
+							'postcss-preset-env',
+							{
+								autoprefixer: {
+									grid: true,
+									flexbox: 'no-2009',
+								},
+								stage: 3,
+							},
+						],
+					].filter(Boolean),
+				},
+			},
+		},
+	]
+
 	return {
 		devtool: IS_DEV ? 'source-map' : false,
 		entry: {
@@ -38,63 +71,12 @@ module.exports = (env, ...rest) => {
 				},
 				{
 					test: /\.css$/i,
-					use: [
-						IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
-						'css-loader',
-						{
-							loader: 'postcss-loader',
-							//   options: {
-							//     postcssOptions: {
-							//       plugins: [
-							//         IS_PROD && [
-							//           // 开发环境不使用postcss-preset-env加浏览器前缀，加快打包时间
-							//           'postcss-preset-env',
-							//           {
-							//             autoprefixer: {
-							//               grid: true,
-							//               flexbox: 'no-2009',
-							//             },
-							//             stage: 3,
-							//           },
-							//         ],
-							//       ].filter(Boolean),
-							//     },
-							//   },
-						},
-					],
+					use: getCssLoaders(1),
 				},
 				{
 					test: /\.scss$/,
 					use: [
-						IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
-						{
-							loader: 'css-loader',
-							options: {
-								modules: true,
-								sourceMap: IS_DEV,
-							},
-						},
-						{
-							loader: 'postcss-loader',
-							//   options: {
-							//     postcssOptions: {
-							//       plugins: [
-							//         require('postcss-flexbugs-fixes'),
-							//         IS_PROD && [
-							//           // 开发环境不使用postcss-preset-env加浏览器前缀，加快打包时间
-							//           'postcss-preset-env',
-							//           {
-							//             autoprefixer: {
-							//               grid: true,
-							//               flexbox: 'no-2009',
-							//             },
-							//             stage: 3,
-							//           },
-							//         ],
-							//       ].filter(Boolean),
-							//     },
-							//   },
-						},
+						...getCssLoaders(2),
 						{
 							loader: 'sass-loader',
 							options: {
@@ -154,7 +136,7 @@ module.exports = (env, ...rest) => {
 			],
 		},
 		output: {
-			// contenthash:8，只要模块内容不变，hash值就不变，打包也就更快
+			// contenthash，只要模块内容不变，hash值就不变，打包也就更快
 			filename: 'js/[name].[contenthash:8].js',
 			path: path.resolve(__dirname, '../dist'),
 			clean: true,
