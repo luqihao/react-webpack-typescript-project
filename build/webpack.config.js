@@ -5,11 +5,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
-const WorkboxPlugin = require('workbox-webpack-plugin')
+const { GenerateSW } = require('workbox-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
-module.exports = (env, ...rest) => {
-	console.log('env', env)
-	console.log('rest', rest)
+module.exports = env => {
 	const IS_DEV = env.development
 	const IS_PROD = env.production
 	const { APP_ENV } = env
@@ -62,10 +61,16 @@ module.exports = (env, ...rest) => {
 			// },
 			// shared: ['lodash', 'react'],
 		},
+		output: {
+			// contenthash，只要模块内容不变，hash值就不变，打包也就更快
+			filename: 'js/[name].[contenthash:8].js',
+			path: path.resolve(__dirname, '../dist'),
+			clean: true,
+		},
 		module: {
 			rules: [
 				{
-					test: /\.tsx?$/,
+					test: /\.(j|t)sx?$/,
 					loader: 'babel-loader',
 					options: { cacheDirectory: true },
 					exclude: /node_modules/,
@@ -136,12 +141,6 @@ module.exports = (env, ...rest) => {
 				}),
 			],
 		},
-		output: {
-			// contenthash，只要模块内容不变，hash值就不变，打包也就更快
-			filename: 'js/[name].[contenthash:8].js',
-			path: path.resolve(__dirname, '../dist'),
-			clean: true,
-		},
 		plugins: [
 			new HtmlWebpackPlugin({
 				template: './index.html',
@@ -149,12 +148,8 @@ module.exports = (env, ...rest) => {
 			new MiniCssExtractPlugin({
 				// 与 webpackOptions.output 中的选项相似
 				// 所有的选项都是可选的
-				filename: IS_PROD
-					? 'css/[name].[contenthash:8].css'
-					: '[name].css',
-				chunkFilename: IS_PROD
-					? 'css/[name].[id].[contenthash:8].css'
-					: '[name].[id].[contenthash:8].css',
+				filename: 'css/[name].[contenthash:8].css',
+				// chunkFilename: 'css/[name].[id].[contenthash:8].css',
 				ignoreOrder: true,
 			}),
 			// webpack5移除了process之类的（说是process是属于node，前端不应该有这个东西）
@@ -166,12 +161,15 @@ module.exports = (env, ...rest) => {
 				// 为何要用JSON.stringfy，请看https://webpack.docschina.org/plugins/define-plugin
 				APP_ENV: JSON.stringify(APP_ENV),
 			}),
-			new WorkboxPlugin.GenerateSW({
+			new GenerateSW({
 				// 这些选项帮助快速启用 ServiceWorkers
 				// 不允许遗留任何“旧的” ServiceWorkers
 				clientsClaim: true,
 				skipWaiting: true,
+				// 文件字体过大，需要重新设置最大值，要不然会报错，如果没有文件字体的话可以忽略这个参数
+				maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
 			}),
+			new BundleAnalyzerPlugin(),
 		],
 		devServer: {
 			compress: true,

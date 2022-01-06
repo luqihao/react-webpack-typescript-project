@@ -6,6 +6,7 @@ import styles from './index.module.scss'
 import testImg from '@assets/images/test.png'
 import testSVG from '@assets/svgs/commentIcon.svg'
 import { useRootStore } from '@utils/customHooks'
+import { getPlusRes } from '@utils/math'
 
 const App = () => {
 	const { globalStore } = useRootStore()
@@ -26,6 +27,7 @@ const App = () => {
 			})
 		})
 		console.log('temp', temp)
+		console.log('app getPlusRes', getPlusRes(1, 2))
 	}, [])
 
 	const counter = useLocalObservable(() => ({
