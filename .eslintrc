@@ -41,7 +41,6 @@
 		// 比如下面的typescript里的规则，针对的就是插件eslint-import-resolver-typescript
 		// 再下面的node就是配置eslint-import-resolver-node
 		// 有人说我们没依赖eslint-import-resolver-node，哪里来的呢，是因为
-		// eslint-import-plugin插件依赖，所以也安装了它，这就要涉及到npm依赖包平铺的规则了，下面会讲
 		"import/resolver": {
 			"typescript": {
 				"project": "./tsconfig.json" // 这里主要解决的是别名的问题，tsconfig.json里有别名设置
@@ -49,6 +48,9 @@
 			"node": {
 				"extensions": [".tsx", ".jsx", ".ts", ".js"]
 			}
+		},
+		"react": {
+        	"version": "detect"
 		}
 	},
 	"rules": {
