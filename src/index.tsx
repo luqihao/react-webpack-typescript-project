@@ -4,6 +4,7 @@ import { Route, Routes, HashRouter } from 'react-router-dom'
 import { getEnv } from '@contants/index'
 import RootProvider from '@components/common/RootProvider'
 // import loadable from '@loadable/component'
+import './utils/registerServiceWorker'
 
 getEnv()
 

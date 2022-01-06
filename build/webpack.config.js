@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
+const WorkboxPlugin = require('workbox-webpack-plugin')
 
 module.exports = (env, ...rest) => {
 	console.log('env', env)
@@ -164,6 +165,12 @@ module.exports = (env, ...rest) => {
 				// 当前分支，区分生产环境、预生产环境、测试环境
 				// 为何要用JSON.stringfy，请看https://webpack.docschina.org/plugins/define-plugin
 				APP_ENV: JSON.stringify(APP_ENV),
+			}),
+			new WorkboxPlugin.GenerateSW({
+				// 这些选项帮助快速启用 ServiceWorkers
+				// 不允许遗留任何“旧的” ServiceWorkers
+				clientsClaim: true,
+				skipWaiting: true,
 			}),
 		],
 		devServer: {

@@ -133,6 +133,7 @@
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/ban-ts-ignore": "off",
         "react/prop-types": "off",
-        "react/display-name": "off"
+        "react/display-name": "off",
+		"promise/always-return": "off"
 	}
 }
