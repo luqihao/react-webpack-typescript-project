@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Link, Outlet } from 'react-router-dom'
-import { observer } from 'mobx-react'
+import { observer } from 'mobx-react-lite'
 
 import styles from './index.module.scss'
 import { useRootStore } from '@utils/customHooks'

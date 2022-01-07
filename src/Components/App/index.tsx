@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { observer, useLocalObservable } from 'mobx-react'
+import { observer, useLocalObservable } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
 
 import styles from './index.module.scss'
@@ -7,6 +7,7 @@ import testImg from '@assets/images/test.png'
 import testSVG from '@assets/svgs/commentIcon.svg'
 import { useRootStore } from '@utils/customHooks'
 import { getPlusRes } from '@utils/math'
+import testWorker from '@workers/test'
 
 const App = () => {
 	const { globalStore } = useRootStore()
@@ -28,6 +29,7 @@ const App = () => {
 		})
 		console.log('temp', temp)
 		console.log('app getPlusRes', getPlusRes(1, 2))
+		testWorker()
 	}, [])
 
 	const counter = useLocalObservable(() => ({

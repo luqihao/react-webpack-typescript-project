@@ -70,6 +70,20 @@ module.exports = env => {
 		module: {
 			rules: [
 				{
+					// worker-loader官网说着不适用webpack5，实际还是支持的
+					test: /\.worker\.ts$/,
+					include: [path.resolve(__dirname, '../src/workers')],
+					use: [
+						{
+							loader: 'worker-loader',
+							options: {
+								inline: 'fallback',
+								filename: 'workers/[name].[contenthash:8].js',
+							},
+						},
+					],
+				},
+				{
 					test: /\.(j|t)sx?$/,
 					loader: 'babel-loader',
 					options: { cacheDirectory: true },
@@ -144,6 +158,7 @@ module.exports = env => {
 		plugins: [
 			new HtmlWebpackPlugin({
 				template: './index.html',
+				chunks: ['index'],
 			}),
 			new MiniCssExtractPlugin({
 				// 与 webpackOptions.output 中的选项相似
@@ -169,7 +184,7 @@ module.exports = env => {
 				// 文件字体过大，需要重新设置最大值，要不然会报错，如果没有文件字体的话可以忽略这个参数
 				maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
 			}),
-			new BundleAnalyzerPlugin(),
+			// new BundleAnalyzerPlugin(),
 		],
 		devServer: {
 			compress: true,
@@ -216,7 +231,7 @@ module.exports = env => {
 				cacheGroups: {
 					vendor: {
 						// 创建一个 custom vendor chunk，其中包含与 RegExp 匹配的某些 node_modules 包
-						test: /[\\/]node_modules[\\/](react|react-dom|lodash|moment|mobx|mobx-react|axios)[\\/]/,
+						test: /[\\/]node_modules[\\/](react|react-dom|lodash|moment|mobx|mobx-react-lite|axios)[\\/]/,
 						name: 'vendors',
 						chunks: 'all',
 					},

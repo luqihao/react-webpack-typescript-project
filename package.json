@@ -10,7 +10,8 @@
     "lint": "npm run lint-eslint && npm run lint-stylelint",
     "lint-eslint": "eslint -c .eslintrc --ext .ts,.tsx,.js src",
     "lint-stylelint": "stylelint --config .stylelintrc src/**/*.{less,css,scss}",
-    "start": "http-server dist"
+    "start": "http-server dist",
+    "demo": "http-server demo"
   },
   "author": "",
   "license": "ISC",
@@ -47,6 +48,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "fork-ts-checker-webpack-plugin": "^6.5.0",
     "html-webpack-plugin": "^5.5.0",
+    "http-server": "^14.0.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.1.4",
     "mini-css-extract-plugin": "^2.4.5",
@@ -74,13 +76,14 @@
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.7.1",
     "workbox-webpack-plugin": "^6.4.2",
+    "worker-loader": "^3.0.8",
     "yarn": "^1.22.17"
   },
   "dependencies": {
     "@loadable/component": "^5.15.2",
     "loadsh": "^0.0.4",
     "mobx": "^6.3.10",
-    "mobx-react": "^7.2.1",
+    "mobx-react-lite": "^3.2.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "6"
