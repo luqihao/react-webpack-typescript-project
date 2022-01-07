@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=production --env production APP_ENV=prod --config ./build/webpack.config.js",
-    "dev": "webpack serve --open --mode=development --env development APP_ENV=dev --config ./build/webpack.config.js",
+    "build": "cross-env NODE_ENV=production APP_ENV=prod webpack --mode=production --config ./build/webpack.config.js",
+    "dev": "cross-env NODE_ENV=development APP_ENV=dev webpack serve --open --mode=development --config ./build/webpack.config.js",
     "lint": "npm run lint-eslint && npm run lint-stylelint",
     "lint-eslint": "eslint -c .eslintrc --ext .ts,.tsx,.js src",
     "lint-stylelint": "stylelint --config .stylelintrc src/**/*.{less,css,scss}",
@@ -35,6 +35,7 @@
     "add": "^2.0.6",
     "babel-loader": "^8.2.3",
     "core-js": "3",
+    "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
     "css-minimizer-webpack-plugin": "^3.3.1",
     "eslint": "^8.5.0",
