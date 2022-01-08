@@ -2732,6 +2732,11 @@ ansi-styles@^6.0.0:
   resolved "https://registry.nlark.com/ansi-styles/download/ansi-styles-6.1.0.tgz#87313c102b8118abd57371afab34618bf7350ed3"
   integrity sha1-hzE8ECuBGKvVc3GvqzRhi/c1DtM=
 
+antd-dayjs-webpack-plugin@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.npm.taobao.org/antd-dayjs-webpack-plugin/download/antd-dayjs-webpack-plugin-1.0.6.tgz#7d98bcb51422248b8cd4a32e352a0425a3bffa3a"
+  integrity sha1-fZi8tRQiJIuM1KMuNSoEJaO/+jo=
+
 antd@^4.18.2:
   version "4.18.2"
   resolved "https://registry.npmmirror.com/antd/download/antd-4.18.2.tgz#e4d03b2229b1f4b3b204e5e5539693aa653d3b7e"
@@ -6275,11 +6280,6 @@ lodash.debounce@^4.0.8:
   resolved "https://registry.nlark.com/lodash.debounce/download/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
-lodash.difference@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.npm.taobao.org/lodash.difference/download/lodash.difference-4.5.0.tgz#9ccb4e505d486b91651345772885a2df27fd017c"
-  integrity sha1-nMtOUF1Ia5FlE0V3KIWi3yf9AXw=
-
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.npmmirror.com/lodash.memoize/download/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
@@ -6655,13 +6655,6 @@ mobx@^6.3.10:
   version "6.3.10"
   resolved "https://registry.npmmirror.com/mobx/download/mobx-6.3.10.tgz#c3bc715c8f03717b9a2329f9697d42b7998d42e0"
   integrity sha512-lfuIN5TGXBNy/5s3ggr1L+IbD+LvfZVlj5q1ZuqyV9AfMtunYQvE8G0WfewS9tgIR3I1q8HJEEbcAOsxEgLwRw==
-
-moment-locales-webpack-plugin@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.nlark.com/moment-locales-webpack-plugin/download/moment-locales-webpack-plugin-1.2.0.tgz#9af83876a44053706b868ceece5119584d10d7aa"
-  integrity sha1-mvg4dqRAU3BrhozuzlEZWE0Q16o=
-  dependencies:
-    lodash.difference "^4.5.0"
 
 moment@^2.24.0, moment@^2.25.3:
   version "2.29.1"

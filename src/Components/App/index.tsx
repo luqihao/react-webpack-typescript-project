@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { observer, useLocalObservable } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
 import { DatePicker, message, Button } from 'antd'
-import { Moment } from 'moment'
+import moment, { Moment } from 'moment'
 import { FastBackwardOutlined } from '@ant-design/icons'
 
 import styles from './index.module.scss'
@@ -42,6 +42,10 @@ const App = () => {
 		})
 		console.log('temp', temp)
 		console.log('app getPlusRes', getPlusRes(1, 2))
+		console.log(
+			'moment',
+			moment().subtract(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+		)
 		testWorker()
 	}, [])
 

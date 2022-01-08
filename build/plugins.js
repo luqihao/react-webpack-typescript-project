@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { GenerateSW } = require('workbox-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin')
 
 const { IS_DEV, IS_PROD, APP_ENV } = require('./contants')
 const envJson = require('./env.json')
@@ -32,9 +32,7 @@ const basePlugins = [
 	// webpack5移除了process之类的（说是process是属于node，前端不应该有这个东西）
 	// 需要自己定义环境变量，然后就可以通过代码访问了
 	new webpack.DefinePlugin(baseEnv),
-	new MomentLocalesPlugin({
-		localesToKeep: ['es-us', 'zh-cn'],
-	}),
+	new AntdDayjsWebpackPlugin(),
 	// new BundleAnalyzerPlugin({
 	// 	analyzerPort: IS_PROD ? 9999 : 8888,
 	// }),
