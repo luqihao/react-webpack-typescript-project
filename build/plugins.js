@@ -31,9 +31,9 @@ const basePlugins = [
 	// webpack5移除了process之类的（说是process是属于node，前端不应该有这个东西）
 	// 需要自己定义环境变量，然后就可以通过代码访问了
 	new webpack.DefinePlugin(baseEnv),
-	new BundleAnalyzerPlugin({
-		analyzerPort: IS_PROD ? 9999 : 8888,
-	}),
+	// new BundleAnalyzerPlugin({
+	// 	analyzerPort: IS_PROD ? 9999 : 8888,
+	// }),
 ]
 
 const prodPlugins = [

@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { observer, useLocalObservable } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
+import { DatePicker, message, Button } from 'antd'
+import { Moment } from 'moment'
+import { FastBackwardOutlined } from '@ant-design/icons'
 
 import styles from './index.module.scss'
 import testImg from '@assets/images/test.png'
@@ -13,6 +16,16 @@ const App = () => {
 	const { globalStore } = useRootStore()
 	const { temp, count, addCount, doubleCount, changeTemp, list, changeList } =
 		globalStore
+
+	const [date, setDate] = useState(null)
+	const handleChange = (value: Moment) => {
+		message.info(
+			`您选择的日期是: ${
+				value ? value.format('YYYY年MM月DD日') : '未选择'
+			}`
+		)
+		setDate(value)
+	}
 
 	const str = '1234'
 
@@ -63,6 +76,15 @@ const App = () => {
 			<button onClick={changeTemp}>change temp</button>
 			<div>{list.map((v: IGlobalStore.Temp) => v.b).join(',')}</div>
 			<button onClick={changeList}>change list</button>
+			<div style={{ width: 400, margin: '100px auto' }}>
+				<DatePicker onChange={handleChange} />
+				<div style={{ marginTop: 16 }}>
+					当前日期：
+					{date ? date.format('YYYY年MM月DD日') : '未选择'}
+				</div>
+			</div>
+			<FastBackwardOutlined />
+			<Button type="primary">丢你咯</Button>
 		</div>
 	)
 }

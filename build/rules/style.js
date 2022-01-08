@@ -2,13 +2,14 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const { resolve } = require('./../utils')
 const { IS_DEV, IS_PROD } = require('./../contants')
+const theme = require('./../../theme')
 
-const getCssLoaders = importLoaders => [
+const getCssLoaders = (importLoaders, modules) => [
 	IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
 	{
 		loader: 'css-loader',
 		options: {
-			modules: true,
+			modules,
 			sourceMap: IS_DEV,
 			importLoaders,
 		},
@@ -39,12 +40,12 @@ const getCssLoaders = importLoaders => [
 module.exports = [
 	{
 		test: /\.css$/i,
-		use: getCssLoaders(1),
+		use: getCssLoaders(1, false),
 	},
 	{
 		test: /\.scss$/,
 		use: [
-			...getCssLoaders(2),
+			...getCssLoaders(2, true),
 			{
 				loader: 'sass-loader',
 				options: {
@@ -56,6 +57,22 @@ module.exports = [
 				loader: 'style-resources-loader',
 				options: {
 					patterns: [resolve('src/styles/*.scss')],
+				},
+			},
+		],
+	},
+	{
+		// for ant design
+		test: /\.less$/,
+		use: [
+			...getCssLoaders(2, false),
+			{
+				loader: 'less-loader',
+				options: {
+					lessOptions: {
+						javascriptEnabled: true,
+						modifyVars: theme,
+					},
 				},
 			},
 		],

@@ -1,12 +1,19 @@
 import React, { lazy, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Route, Routes, HashRouter } from 'react-router-dom'
+// import loadable from '@loadable/component'
+import { ConfigProvider } from 'antd'
+import zhCN from 'antd/lib/locale/zh_CN'
+import moment from 'moment'
+import 'antd/dist/antd.less'
+import 'moment/locale/zh-cn'
+
+import '@utils/registerServiceWorker'
 import { getEnv } from '@contants/index'
 import RootProvider from '@components/common/RootProvider'
-// import loadable from '@loadable/component'
-import './utils/registerServiceWorker'
 
 getEnv()
+moment.locale('zh-cn')
 
 // import App from '@Components/App'
 // import NotFound from '@Components/NotFound'
@@ -43,22 +50,24 @@ const Page2 = lazy(
 // const Page2 = loadable(() => import('@Components/Page2'))
 
 ReactDOM.render(
-	<RootProvider>
-		{/* 使用React.lazy时一定要用Suspense包住，否则报错 */}
-		<Suspense fallback={<div>loading</div>}>
-			<HashRouter>
-				<Routes>
-					<Route path="/" element={<App />} />
-					<Route path="page1" element={<Page1 />}>
-						<Route path="page11" element={<Page11 />} />
-						<Route path="page12" element={<Page12 />} />
-						<Route path=":number" element={<Page11 />} />
-					</Route>
-					<Route path="page2" element={<Page2 />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</HashRouter>
-		</Suspense>
-	</RootProvider>,
+	<ConfigProvider locale={zhCN}>
+		<RootProvider>
+			{/* 使用React.lazy时一定要用Suspense包住，否则报错 */}
+			<Suspense fallback={<div>loading</div>}>
+				<HashRouter>
+					<Routes>
+						<Route path="/" element={<App />} />
+						<Route path="page1" element={<Page1 />}>
+							<Route path="page11" element={<Page11 />} />
+							<Route path="page12" element={<Page12 />} />
+							<Route path=":number" element={<Page11 />} />
+						</Route>
+						<Route path="page2" element={<Page2 />} />
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+				</HashRouter>
+			</Suspense>
+		</RootProvider>
+	</ConfigProvider>,
 	document.getElementById('app')
 )
