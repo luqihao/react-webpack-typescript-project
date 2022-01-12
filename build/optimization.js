@@ -15,7 +15,7 @@ const optimization = IS_DEV
 					terserOptions: {
 						format: {
 							// 删除所有的注释
-							comments: true,
+							comments: false,
 						},
 						compress: true,
 					},
