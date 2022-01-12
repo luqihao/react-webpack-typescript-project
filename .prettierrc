@@ -3,7 +3,8 @@
 	"useTabs": true,
 	"semi": false,
 	"singleQuote": true,
-	"TrailingCooma": "none",
+	"trailingCooma": "none",
 	"bracketSpacing": true,
-	"arrowParens": "avoid"
+	"arrowParens": "avoid",
+	"printWidth": 120
 }

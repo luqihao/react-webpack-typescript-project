@@ -15,7 +15,8 @@
 		"plugin:react/recommended",
 		"plugin:promise/recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:prettier/recommended"
+		"plugin:prettier/recommended",
+		"prettier"
 	],
 	// 指定解析器
 	// 默认情况下，ESLint使用Espree作为其解析器。您可以选择指定在配置文件中使用其他解析器
@@ -134,6 +135,7 @@
         "@typescript-eslint/ban-ts-ignore": "off",
         "react/prop-types": "off",
         "react/display-name": "off",
-		"promise/always-return": "off"
+		"promise/always-return": "off",
+		"promise/catch-or-return": "off"
 	}
 }
