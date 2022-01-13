@@ -53,6 +53,10 @@ const prodPlugins = [
 		// 文件字体过大，需要重新设置最大值，要不然会报错，如果没有文件字体的话可以忽略这个参数
 		maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
 	}),
+	new webpack.ProgressPlugin((percentage, message, ...args) => {
+		// e.g. Output each progress message directly to the console:
+		console.info(percentage, message, ...args)
+	}),
 	new BundleAnalyzerPlugin(),
 ]
 
