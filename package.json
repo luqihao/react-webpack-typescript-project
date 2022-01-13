@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "react-webpack-typescript始终保持各模块最新配置学习",
   "main": "src/index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cross-env NODE_ENV=production APP_ENV=prod webpack --mode=production --config ./build/webpack.config.js",
@@ -11,7 +12,8 @@
     "lint-eslint": "eslint -c .eslintrc --ext .ts,.tsx,.js src",
     "lint-stylelint": "stylelint --config .stylelintrc src/**/*.{less,css,scss}",
     "start": "http-server dist",
-    "demo": "http-server demo"
+    "demo": "http-server demo",
+    "postinstall": "husky install"
   },
   "author": "",
   "license": "ISC",
