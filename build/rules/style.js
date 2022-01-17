@@ -1,4 +1,4 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin').default
 
 const { resolve } = require('./../utils')
 const { IS_DEV, IS_PROD } = require('./../contants')
