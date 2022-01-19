@@ -14,16 +14,11 @@ import testWorker from '@workers/test'
 
 const App = () => {
 	const { globalStore } = useRootStore()
-	const { temp, count, addCount, doubleCount, changeTemp, list, changeList } =
-		globalStore
+	const { temp, count, addCount, doubleCount, changeTemp, list, changeList } = globalStore
 
 	const [date, setDate] = useState(null)
 	const handleChange = (value: Moment) => {
-		message.info(
-			`您选择的日期是: ${
-				value ? value.format('YYYY年MM月DD日') : '未选择'
-			}`
-		)
+		message.info(`您选择的日期是: ${value ? value.format('YYYY年MM月DD日') : '未选择'}`)
 		setDate(value)
 	}
 
@@ -42,10 +37,7 @@ const App = () => {
 		})
 		console.log('temp', temp)
 		console.log('app getPlusRes', getPlusRes(1, 2))
-		console.log(
-			'moment',
-			moment().subtract(2, 'days').format('YYYY-MM-DD HH:mm:ss')
-		)
+		console.log('moment', moment().subtract(2, 'days').format('YYYY-MM-DD HH:mm:ss'))
 		testWorker()
 	}, [])
 

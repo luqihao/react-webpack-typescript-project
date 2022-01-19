@@ -13,14 +13,6 @@ export const RootContext = createContext<IAllStore>(null)
  * @param {{ children?: React.ReactNode }} { children }
  * @returns
  */
-export default function RootProvider({
-	children,
-}: {
-	children?: React.ReactNode
-}) {
-	return (
-		<RootContext.Provider value={{ ...store }}>
-			{children}
-		</RootContext.Provider>
-	)
+export default function RootProvider({ children }: { children?: React.ReactNode }) {
+	return <RootContext.Provider value={{ ...store }}>{children}</RootContext.Provider>
 }
