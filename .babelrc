@@ -3,7 +3,8 @@
         [
             "@babel/preset-env", // 将基于你的实际浏览器及运行环境，自动的确定babel插件及polyfill
             {
-                "useBuiltIns": "usage", // 按需使用
+                // useBuildInts 和babel/plugin-transform-runtime不能混：https://github.com/babel/babel/issues/10271#issuecomment-528379505
+                // "useBuiltIns": "usage", // 按需使用
                 "modules": false // 意思是不转义import语法，主要是为了tree-shaking
             }
         ],
