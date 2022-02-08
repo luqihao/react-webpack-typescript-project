@@ -48,7 +48,7 @@ const App = () => {
 		},
 		downNumber() {
 			this.number--
-		},
+		}
 	}))
 
 	return (

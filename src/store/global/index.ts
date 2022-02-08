@@ -7,7 +7,7 @@ class GlobalStore {
 
 	temp: IGlobalStore.Temp = {
 		a: 1,
-		b: 2,
+		b: 2
 	}
 
 	changeTemp = () => {
@@ -18,16 +18,16 @@ class GlobalStore {
 	list: IGlobalStore.Temp[] = [
 		{
 			a: 1,
-			b: 2,
+			b: 2
 		},
 		{
 			a: 3,
-			b: 4,
+			b: 4
 		},
 		{
 			a: 5,
-			b: 6,
-		},
+			b: 6
+		}
 	]
 
 	changeList = () => {
