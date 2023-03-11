@@ -15,12 +15,12 @@ const optimization = IS_DEV
 					terserOptions: {
 						format: {
 							// 删除所有的注释
-							comments: false,
+							comments: false
 						},
-						compress: true,
-					},
+						compress: true
+					}
 				}),
-				new CssMinimizerPlugin(), // css压缩插件
+				new CssMinimizerPlugin() // css压缩插件
 			],
 			splitChunks: {
 				// 这个是重点下面讲
@@ -31,13 +31,13 @@ const optimization = IS_DEV
 						// 创建一个 custom vendor chunk，其中包含与 RegExp 匹配的某些 node_modules 包
 						test: /[\\/]node_modules[\\/](react|react-dom|lodash|moment|mobx|mobx-react-lite|axios)[\\/]/,
 						name: 'vendors',
-						chunks: 'all',
-					},
-				},
+						chunks: 'all'
+					}
+				}
 			},
 			runtimeChunk: 'single',
 			moduleIds: 'deterministic',
-			removeAvailableModules: false,
+			removeAvailableModules: false
 	  }
 
 module.exports = optimization

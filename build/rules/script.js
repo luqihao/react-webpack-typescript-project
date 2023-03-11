@@ -10,15 +10,15 @@ module.exports = [
 				loader: 'worker-loader',
 				options: {
 					inline: 'fallback',
-					filename: 'static/workers/[name].[contenthash:8].js',
-				},
-			},
-		],
+					filename: 'static/workers/[name].[contenthash:8].js'
+				}
+			}
+		]
 	},
 	{
 		test: /\.(j|t)sx?$/,
 		loader: 'babel-loader',
 		options: { cacheDirectory: true },
-		exclude: /node_modules/,
-	},
+		exclude: /node_modules/
+	}
 ]

@@ -8,5 +8,5 @@ module.exports = {
 	IS_DEV,
 	IS_PROD,
 	APP_ENV,
-	file_extensions,
+	file_extensions
 }

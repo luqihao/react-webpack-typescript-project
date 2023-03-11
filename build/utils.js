@@ -5,5 +5,5 @@ const resolve = dir => {
 }
 
 module.exports = {
-	resolve,
+	resolve
 }
