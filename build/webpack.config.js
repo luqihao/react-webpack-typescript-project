@@ -12,16 +12,16 @@ module.exports = env => {
 	return {
 		devtool: IS_DEV ? 'source-map' : false,
 		entry: {
-			index: ['./src/index.tsx'],
+			index: ['./src/index.tsx']
 		},
 		output: {
 			// contenthash，只要模块内容不变，hash值就不变，打包也就更快
 			filename: 'static/js/[name].[contenthash:8].js',
 			path: resolve('dist'),
-			clean: true,
+			clean: true
 		},
 		module: {
-			rules,
+			rules
 		},
 		resolve: {
 			extensions: file_extensions,
@@ -29,9 +29,9 @@ module.exports = env => {
 				// 使用tsconfig里面配置的paths而不需要再重新配置alias
 				new TsconfigPathsPlugin({
 					configFile: resolve('tsconfig.json'),
-					extensions: file_extensions,
-				}),
-			],
+					extensions: file_extensions
+				})
+			]
 		},
 		plugins,
 		cache: {
@@ -41,16 +41,16 @@ module.exports = env => {
 			// 写入缓存将同时写入内存缓存和文件系统缓存。也就是说它比memory模式更好
 			type: 'filesystem',
 			buildDependencies: {
-				config: [__filename],
-			},
+				config: [__filename]
+			}
 		},
 		optimization,
 		devServer: IS_DEV
 			? {
 					compress: true,
 					port: 9000,
-					host: '0.0.0.0',
+					host: '0.0.0.0'
 			  }
-			: undefined,
+			: undefined
 	}
 }

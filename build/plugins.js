@@ -27,7 +27,12 @@ if (envJson[APP_ENV]) {
 const basePlugins = [
 	new HtmlWebpackPlugin({
 		template: path.resolve(__dirname, './templates/index.html'),
-		chunks: ['index']
+		chunks: ['index'],
+		open: target => {
+			console.info('target', target)
+			// 使用 target 参数来判断网站是否已经打开
+			return !/\\.svg$/.test(target)
+		}
 	}),
 	// webpack5移除了process之类的（说是process是属于node，前端不应该有这个东西）
 	// 需要自己定义环境变量，然后就可以通过代码访问了

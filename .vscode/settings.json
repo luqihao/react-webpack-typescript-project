@@ -1,23 +1,24 @@
 {
-    "stylelint.enable": true,
-    "css.validate": false, // 禁用vscode本身的css校验功能
-    "less.validate": false, // 禁用vscode本身的less校验功能
-    "scss.validate": false, // 禁用vscode本身的scss校验功能
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "typescriptreact"
-    ], // eslint 校验的文件格式
-    "search.exclude": { // 搜索文件时排除的文件夹
-        "**/node_modules": true,
-        "dist": true,
-        "build": true
-    },
-    "editor.formatOnSave": true, // 保存时，自动格式化
-    "editor.codeActionsOnSave": { // 保存时自动格式化eslint的规则和stylint的规则
-        "source.fixAll.eslint": true,
-        "source.fixAll.stylelint": true
-    },
-    "stylelint.validate": ["css", "scss"] // 一定要配这个，样式文件才会报错，autofix才会生效
+	"stylelint.enable": true,
+	"css.validate": false, // 禁用vscode本身的css校验功能
+	"less.validate": false, // 禁用vscode本身的less校验功能
+	"scss.validate": false, // 禁用vscode本身的scss校验功能
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"], // eslint 校验的文件格式
+	"search.exclude": {
+		// 搜索文件时排除的文件夹
+		"**/node_modules": true,
+		"dist": true,
+		"build": true
+	},
+	"editor.formatOnSave": true, // 保存时，自动格式化
+	"editor.codeActionsOnSave": {
+		// 保存时自动格式化eslint的规则和stylint的规则
+		"source.fixAll.eslint": true,
+		"source.fixAll.stylelint": true
+	},
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"stylelint.validate": ["css", "scss"] // 一定要配这个，样式文件才会报错，autofix才会生效
 }

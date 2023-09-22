@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { observer, useLocalObservable } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
 import { DatePicker, message, Button } from 'antd'
@@ -11,11 +11,12 @@ import testSVG from '@assets/svgs/commentIcon.svg'
 import { useRootStore } from '@utils/customHooks'
 import { getPlusRes } from '@utils/math'
 import testWorker from '@workers/test'
+import ImageCanvas from './ImageCanvas'
+import Clock from '@components/common/Clock'
 
 const App = () => {
 	const { globalStore } = useRootStore()
 	const { temp, count, addCount, doubleCount, changeTemp, list, changeList } = globalStore
-
 	const [date, setDate] = useState(null)
 	const handleChange = (value: Moment) => {
 		message.info(`您选择的日期是: ${value ? value.format('YYYY年MM月DD日') : '未选择'}`)
@@ -50,9 +51,35 @@ const App = () => {
 			this.number--
 		}
 	}))
+	const [range, setRange] = useState<Range>(null)
 
 	return (
 		<div className={styles.app}>
+			<Clock />
+			<div
+				contentEditable
+				id="text"
+				onBlur={e => {
+					return false
+				}}
+			>
+				疯狂结束多哈减肥后就开始打好饭看发撒的空间发挥空间
+			</div>
+			<div
+				onClick={e => {
+					e.preventDefault()
+					const sel = getSelection()
+					sel.removeAllRanges()
+					sel.addRange(range)
+					// document.execCommand('foreColor', false, 'green')
+					// const div = document.getElementById('text')
+					// const range = document.createRange() // 创建一个 Range 对象
+					// range.setStart(div, 1) // 从第一个子节点的第二个字符开始选中
+					// range.setEnd(div, 3) // 到第一个子节点的第四个字符结束选中
+				}}
+			>
+				变粗
+			</div>
 			App
 			<img src={testImg} />
 			<img src={testSVG} />
@@ -81,6 +108,9 @@ const App = () => {
 			</div>
 			<FastBackwardOutlined />
 			<Button type="primary">丢你咯</Button>
+			<div style={{ height: 500, width: 700 }}>
+				<ImageCanvas imageSrc="https://picsum.photos/640/360" widthRatio={0.5} heightRatio={0.5} />
+			</div>
 		</div>
 	)
 }
