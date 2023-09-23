@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useInterval } from 'ahooks'
 import classnames from 'classnames'
 
 import styles from './index.module.scss'
@@ -12,32 +13,51 @@ for (let i = 0; i < 60; i++) {
 }
 
 const hour = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+const secHeight = 2
+const minHeight = 3
+const hourHeight = 5
+
+const formatZero = (value: number) => {
+	return value < 10 ? '0' + value : value
+}
 
 const Clock = () => {
 	const [secDeg, setSecDeg] = useState(0)
 	const [minDeg, setMinDeg] = useState(0)
 	const [hourDeg, setHourDeg] = useState(0)
+	const [time, setTime] = useState([0, 0, 0])
+
+	const init = () => {
+		const now = new Date()
+		const hour = now.getHours()
+		const min = now.getMinutes()
+		const sec = now.getSeconds()
+		setTime([hour, min, sec])
+		const secAngle = sec * (360 / 60) - 90 - secHeight / (2 * Math.PI)
+		const minAngle = min * (360 / 60) + sec * 0.1 - 90 - minHeight / (2 * Math.PI)
+		const hourAngle = (hour - 12) * (360 / 12) + min * 0.5 - 90 - hourHeight / (2 * Math.PI)
+		setSecDeg(secAngle)
+		setMinDeg(minAngle)
+		setHourDeg(hourAngle)
+	}
 
 	const calculate = () => {
 		const now = new Date()
 		const hour = now.getHours()
 		const min = now.getMinutes()
 		const sec = now.getSeconds()
-		const secAngle = sec * (360 / 60) - 90
-		const minAngle = min * (360 / 60) - 90
-		const hourAngle = Math.round(hour - 12) * (360 / 12) - 90
-		setSecDeg(secAngle)
-		setMinDeg(minAngle)
-		setHourDeg(hourAngle)
+		setTime([hour, min, sec])
+		setSecDeg(secDeg + 360 / 60)
+		setMinDeg(minDeg + 360 / 60 / 60)
+		setHourDeg(hourDeg + 360 / 12 / 60 / 60)
 	}
 
-	const timer = useRef(setInterval(() => calculate(), 1000))
+	useInterval(() => {
+		calculate()
+	}, 1000)
 
 	useEffect(() => {
-		calculate()
-		return () => {
-			clearInterval(timer.current)
-		}
+		init()
 	}, [])
 
 	return (
@@ -69,18 +89,21 @@ const Clock = () => {
 					</div>
 				)
 			})}
+			<div className={styles['time']}>
+				{formatZero(time[0])}:{formatZero(time[1])}:{formatZero(time[2])}
+			</div>
 			<div className={styles['center']}></div>
 			<div
 				className={classnames(styles['line'], styles['hour'])}
-				style={{ transform: `translateY(-50%) rotate(${hourDeg}deg)` }}
+				style={{ transform: `translateY(-50%) rotate(${hourDeg}deg)`, height: hourHeight }}
 			></div>
 			<div
 				className={classnames(styles['line'], styles['min'])}
-				style={{ transform: `translateY(-50%) rotate(${minDeg}deg)` }}
+				style={{ transform: `translateY(-50%) rotate(${minDeg}deg)`, height: minHeight }}
 			></div>
 			<div
 				className={classnames(styles['line'], styles['sec'])}
-				style={{ transform: `translateY(-50%) rotate(${secDeg}deg)` }}
+				style={{ transform: `translateY(-50%) rotate(${secDeg}deg)`, height: secHeight }}
 			></div>
 		</div>
 	)
