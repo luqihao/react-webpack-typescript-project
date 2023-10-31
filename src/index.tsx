@@ -5,7 +5,6 @@ import { Route, Routes, HashRouter } from 'react-router-dom'
 import { ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 import moment from 'moment'
-import 'antd/dist/antd.less'
 import 'moment/locale/zh-cn'
 
 import '@utils/registerServiceWorker'
