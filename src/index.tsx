@@ -7,6 +7,7 @@ import zhCN from 'antd/lib/locale/zh_CN'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
 
+import './index.scss'
 import '@utils/registerServiceWorker'
 import { getEnv } from '@contants/index'
 import RootProvider from '@components/common/RootProvider'
@@ -22,13 +23,14 @@ moment.locale('zh-cn')
 // import Page2 from '@Components/Page2'
 
 // React.lazy不支持服务端渲染，打包出来的index.module.js比@loadable/component更小
-const App = lazy(() => import(/* webpackChunkName: 'App' */ '@components/App'))
+// const App = lazy(() => import(/* webpackChunkName: 'App' */ '@components/App'))
 // 如果vscode报格式错误，可能是这个原因：https://blog.csdn.net/wn1245343496/article/details/121006978
 const NotFound = lazy(() => import(/* webpackChunkName: 'NotFound' */ '@components/NotFound'))
 const Page1 = lazy(() => import(/* webpackChunkName: 'Page1' */ '@components/Page1'))
 const Page11 = lazy(() => import(/* webpackChunkName: 'Page11' */ '@components/Page1/Page11'))
 const Page12 = lazy(() => import(/* webpackChunkName: 'Page12' */ '@components/Page1/Page12'))
 const Page2 = lazy(() => import(/* webpackChunkName: 'Page2' */ '@components/Page2'))
+const Matter = lazy(() => import(/* webpackChunkName: 'Matter' */ '@components/Matter'))
 
 // @loadable/component支持服务端渲染
 // const App = loadable(() => import('@Components/App'))
@@ -45,7 +47,7 @@ ReactDOM.render(
 			<Suspense fallback={<div>loading</div>}>
 				<HashRouter>
 					<Routes>
-						<Route path="/" element={<App />} />
+						<Route path="/" element={<Matter />} />
 						<Route path="page1" element={<Page1 />}>
 							<Route path="page11" element={<Page11 />} />
 							<Route path="page12" element={<Page12 />} />
