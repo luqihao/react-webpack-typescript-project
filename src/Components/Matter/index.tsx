@@ -7,11 +7,11 @@ import LuckyBall, { boxSize, borderWidth, launchContainerWidth, prizeList, prize
 // 弹簧条数
 const springLines = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
 // 弹簧条宽度
-const springLineWidth = 30
+const springLineWidth = 10
 // 弹簧条高度
-const springLineHeight = 3
+const springLineHeight = 1
 // 弹簧帽高度
-const springLineCapHeight = 5
+const springLineCapHeight = 2
 // 弹簧可伸缩最大角度
 const springFlexMaxAngle = -15
 // 弹簧固定角度
@@ -35,8 +35,15 @@ const getSpringHeight = (angle: number) => {
 	return height
 }
 
+const arr = [
+	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+]
 const Matter = () => {
-	const luckyBall = useRef(new LuckyBall({ springHeight: getSpringHeight(springFlexMaxAngle) }))
+	const luckyBall = useRef(null)
 	const increment = useRef(1)
 
 	const [isPress, setIsPress] = useState(false)
@@ -66,71 +73,104 @@ const Matter = () => {
 	}
 
 	useEffect(() => {
-		luckyBall.current.init()
+		// luckyBall.current = new LuckyBall({ springHeight: getSpringHeight(springFlexMaxAngle) })
+		// luckyBall.current.init(document.getElementById('canvas') as HTMLCanvasElement, false)
+
+		arr.forEach((v, i) => {
+			v.forEach((vv, ii) => {
+				console.log(-12 - ii * 0.1 - i)
+				const luck = new LuckyBall({
+					springHeight: getSpringHeight(springFlexMaxAngle),
+					calculateY: -13 - ii * 0.1 - i
+				})
+				luck.init(document.getElementById(`canvas${i.toString() + ii.toString()}`) as HTMLCanvasElement, true)
+			})
+		})
 		return () => {
 			clear?.()
 		}
 	}, [])
 
 	return (
-		<>
-			<div style={{ ...boxSize, margin: '50px auto', position: 'relative' }}>
-				<canvas style={{ ...boxSize }} id="canvas" className={styles['canvas']}></canvas>
-				<div style={{ position: 'absolute', bottom: borderWidth * 2, left: 0, zIndex: -1, display: 'flex' }}>
-					{prizeList.map((prize, index) => {
-						return (
+		<div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'flex-start' }}>
+			{arr.map((v, i) => {
+				return v.map((vv, ii) => {
+					return (
+						<div
+							key={i.toString() + ii.toString()}
+							style={{ ...boxSize, margin: '50px auto', position: 'relative' }}
+						>
+							<canvas
+								style={{ ...boxSize }}
+								id={`canvas${i.toString() + ii.toString()}`}
+								className={styles['canvas']}
+							></canvas>
 							<div
-								key={index + prize}
 								style={{
-									marginLeft: borderWidth,
-									textAlign: 'center',
-									fontSize: 20,
-									width: prizeWidth
+									position: 'absolute',
+									bottom: borderWidth * 2,
+									left: 0,
+									zIndex: -1,
+									display: 'flex'
 								}}
 							>
-								{prize.split('|').map(text => {
-									return <div key={text}>{text}</div>
+								{prizeList.map((prize, index) => {
+									return (
+										<div
+											key={index + prize}
+											style={{
+												marginLeft: borderWidth,
+												textAlign: 'center',
+												fontSize: 12,
+												width: prizeWidth
+											}}
+										>
+											{prize.split('|').map(text => {
+												return <div key={text}>{text}</div>
+											})}
+										</div>
+									)
 								})}
 							</div>
-						)
-					})}
-				</div>
-				{/* 弹簧用css画吧 */}
-				<div
-					className={styles['spring']}
-					style={{ width: launchContainerWidth, right: borderWidth, bottom: borderWidth }}
-				>
-					<div className={styles['cap']} style={{ height: springLineCapHeight }}></div>
-					{springLines.map((v, i) => {
-						return v === 1 ? (
+							{/* 弹簧用css画吧 */}
 							<div
-								key={i}
-								className={styles['stand']}
-								style={{
-									width: springLineWidth,
-									height: getSideLength(springLineWidth, springRegularAngle),
-									transformOrigin: 'left',
-									transform: `rotateZ(${springRegularAngle}deg)`
-								}}
-							></div>
-						) : (
-							<div key={i} style={{ height: getSideLength(springLineWidth, angle) }}>
-								<div
-									className={styles['stand']}
-									style={{
-										width: springLineWidth,
-										height: springLineHeight,
-										transformOrigin: 'right',
-										transform: `rotateZ(${angle}deg)`
-									}}
-								></div>
+								className={styles['spring']}
+								style={{ width: launchContainerWidth, right: borderWidth, bottom: borderWidth }}
+							>
+								<div className={styles['cap']} style={{ height: springLineCapHeight }}></div>
+								{springLines.map((v, i) => {
+									return v === 1 ? (
+										<div
+											key={i}
+											className={styles['stand']}
+											style={{
+												width: springLineWidth,
+												height: getSideLength(springLineWidth, springRegularAngle),
+												transformOrigin: 'left',
+												transform: `rotateZ(${springRegularAngle}deg)`
+											}}
+										></div>
+									) : (
+										<div key={i} style={{ height: getSideLength(springLineWidth, angle) }}>
+											<div
+												className={styles['stand']}
+												style={{
+													width: springLineWidth,
+													height: springLineHeight,
+													transformOrigin: 'right',
+													transform: `rotateZ(${angle}deg)`
+												}}
+											></div>
+										</div>
+									)
+								})}
+								<div className={styles['cap']} style={{ height: springLineCapHeight }}></div>
 							</div>
-						)
-					})}
-					<div className={styles['cap']} style={{ height: springLineCapHeight }}></div>
-				</div>
-			</div>
-			<div className={styles['press-area']}>
+						</div>
+					)
+				})
+			})}
+			{/* <div className={styles['press-area']}>
 				<div
 					className={styles['text']}
 					onMouseDown={() => {
@@ -152,8 +192,8 @@ const Matter = () => {
 						}%`
 					}}
 				></div>
-			</div>
-		</>
+			</div> */}
+		</div>
 	)
 }
 

@@ -12,9 +12,8 @@
 	},
 	"editor.formatOnSave": true, // 保存时，自动格式化
 	"editor.codeActionsOnSave": {
-		// 保存时自动格式化eslint的规则和stylint的规则
-		"source.fixAll.eslint": true,
-		"source.fixAll.stylelint": true
+		"source.fixAll.eslint": "explicit",
+		"source.fixAll.stylelint": "explicit"
 	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"[javascript]": {
