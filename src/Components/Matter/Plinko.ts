@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js'
-import { Engine, Render, Events, Bodies, Body, Composite, Runner, Bounds, Common } from 'matter-js'
+import { Engine, Render, Events, Bodies, Body, Composite, Runner, Bounds, Vector } from 'matter-js'
+
+import { prize4, prize5 } from './ballPosRecord'
 
 // 容器宽高
 export const boxSize = {
@@ -13,9 +15,9 @@ const ballRadius = 6
 // 障碍物圆柱半径
 const obstacleRadius = 6
 // 障碍物圆柱渲染多少层
-const obstacleHorNum = 4
+const obstacleRows = 4
 // 障碍物圆柱渲染多少列
-const obstacleColNum = 5
+const obstacleCols = 5
 // 右侧发射通道宽度
 export const launchContainerWidth = 20
 // 奖品列表
@@ -27,13 +29,13 @@ export const prizeWidth = (boxSize.width - (3 + (prizeNum - 1)) * borderWidth - 
 // 奖品边界高度
 const prizeHeight = 35
 
-interface LuckyBallOption {
+interface PlinkoOption {
 	springHeight: number
 	calculateY?: number
 }
 
-const loopTime = 3
-class LuckyBall {
+const loopTime = 50
+class Plinko {
 	private composite: Composite = null
 	private ball: Body = null
 	private engine: Engine = null
@@ -43,11 +45,20 @@ class LuckyBall {
 	public springHeight = 0
 	public calculatingLaunchSpeedResult = {}
 	public bounds: Bounds = Bounds.create([
-		{ x: ballRadius + borderWidth, y: ballRadius + borderWidth },
-		{ x: boxSize.width - ballRadius - borderWidth, y: boxSize.height - ballRadius - borderWidth }
+		// { x: ballRadius + borderWidth, y: ballRadius + borderWidth },
+		// { x: boxSize.width - ballRadius - borderWidth, y: boxSize.height - ballRadius - borderWidth },
+		{
+			x: 0,
+			y: 0
+		},
+		{
+			x: boxSize.width,
+			y: boxSize.height
+		}
 	])
 
 	canvas = null
+	ballPosList = []
 
 	// 用于自动化计算
 	calculateY: BigNumber = new BigNumber(0)
@@ -56,7 +67,7 @@ class LuckyBall {
 	autoCalculate = false
 	loopNum = loopTime
 
-	constructor(options: LuckyBallOption) {
+	constructor(options: PlinkoOption) {
 		this.springHeight = options.springHeight || 0
 		if (!!Math.abs(options?.calculateY)) {
 			this.calculateY = new BigNumber(options.calculateY)
@@ -68,7 +79,7 @@ class LuckyBall {
 	calculatingLaunchSpeed = async () => {
 		this.autoCalculate = true
 		if (this.calculateY.isGreaterThanOrEqualTo(this.max)) {
-			this.gameStart(this.calculateY.toNumber())
+			this.gameStart({ y: this.calculateY.toNumber() })
 		} else {
 			console.log('this.calculatingLaunchSpeedResult', this.calculatingLaunchSpeedResult)
 			const obj = {}
@@ -123,67 +134,109 @@ class LuckyBall {
 				this.setCalculateResult(value)
 				this.continueCalculate()
 				console.log(`小球与${value}碰撞`)
-				this.reset()
+				setTimeout(() => {
+					this.reset()
+				}, 2000)
 			} else if (
 				['ball', 'springCap'].some(v => pair.bodyA.label.includes(v)) &&
 				['ball', 'springCap'].some(v => pair.bodyB.label.includes(v))
 			) {
-				this.setCalculateResult(`游戏失败，此时速度为${this.calculateY}`)
+				this.setCalculateResult(`游戏失败`)
 				this.continueCalculate()
 				console.log(`游戏失败，此时速度为${this.calculateY}`)
-				this.reset()
+				setTimeout(() => {
+					this.reset()
+				}, 2000)
 			}
 		}
 	}
 
 	handleBallOverBound = () => {
 		// 获取小球位置
-		const ballPosition = this.ball.position
+		const pos = this.ball.position
 
 		// 判断小球是否超出范围
-		if (!Bounds.contains(this.bounds, ballPosition)) {
-			// 将小球速度取反
-			this.ball.velocity.x *= -1
-			this.ball.velocity.y *= -1
-
-			// 重新设置小球位置
-			Body.setPosition(this.ball, {
-				x: Common.clamp(ballPosition.x, this.bounds.min.x, this.bounds.max.x),
-				y: Common.clamp(ballPosition.y, this.bounds.min.y, this.bounds.max.y)
-			})
+		if (
+			(this.bounds.max.x <= pos.x ||
+				this.bounds.max.y <= pos.y ||
+				this.bounds.min.x >= pos.x ||
+				this.bounds.min.y >= pos.y) &&
+			this.autoCalculate
+		) {
+			this.setCalculateResult(`游戏异常`)
+			this.continueCalculate()
+			console.log(`游戏异常，此时速度为${this.calculateY}，x: ${pos.x}，y: ${pos.y}`, this.bounds)
+			this.reset()
 		}
 	}
 
+	recordBallPos = () => {
+		this.ballPosList.push({ ...this.ball.position })
+	}
+
 	// 开始游戏
-	gameStart = async (y = -13) => {
+	gameStart = async ({ record, prize, y = -13.52 }: { record?: Vector[]; prize?: number; y?: number }) => {
 		if (this.isRunning) {
 			return
 		}
-		Events.on(this.engine, 'collisionStart', this.handleGameEnd)
-		Events.on(this.engine, 'beforeUpdate', this.handleBallOverBound)
-		Body.setStatic(this.ball, false)
-		Body.setVelocity(this.ball, { x: 0, y })
+		if (Array.isArray(record)) {
+			const list = [...record]
+			const timer = setInterval(() => {
+				Body.setPosition(this.ball, list[0])
+				if (list.length === 1) {
+					clearInterval(timer)
+					alert(`恭喜中了奖品${prize}`)
+					this.reset()
+				}
+				list.shift()
+			}, 16)
+		} else {
+			Events.on(this.engine, 'collisionStart', this.handleGameEnd)
+			Events.on(this.engine, 'beforeUpdate', this.handleBallOverBound)
+			Events.on(this.render, 'afterRender', this.recordBallPos)
+			Body.setStatic(this.ball, false)
+			Body.setVelocity(this.ball, { x: 0, y })
+		}
 		this.isRunning = true
 	}
 
 	// 重置游戏
 	reset = () => {
-		console.log('重置游戏')
-		Events.off(this.engine, 'collisionStart', this.handleGameEnd)
-		Events.off(this.engine, 'beforeUpdate', this.handleBallOverBound)
-		Events.off(this.render, 'afterRender', this.renderSpeed)
-		Render.stop(this.render)
-		Runner.stop(this.runner)
-		Engine.clear(this.engine)
-		Composite.clear(this.composite, true)
-		this.ball = null
-		this.engine = null
-		this.render = null
-		this.runner = null
+		console.log('重置游戏', JSON.stringify(this.ballPosList))
+		this.ballPosList = []
+		// 第一种重置，整个canvas重新初始化
+		// Events.off(this.engine, 'collisionStart', this.handleGameEnd)
+		// Events.off(this.engine, 'beforeUpdate', this.handleBallOverBound)
+		// Events.off(this.render, 'afterRender', this.renderSpeed)
+		// Render.stop(this.render)
+		// Runner.stop(this.runner)
+		// Engine.clear(this.engine)
+		// Composite.clear(this.composite, true)
+		// this.ball = null
+		// this.engine = null
+		// this.render = null
+		// this.runner = null
+		// this.isRunning = false
+		// setTimeout(() => {
+		// 	this.init(this.canvas, this.autoCalculate)
+		// }, 50)
+
+		// 第二种重置，删除旧的小球，新建新的小球
 		this.isRunning = false
+		Composite.remove(this.composite, this.ball)
+		this.ball = this.drawBall()
+		Composite.add(this.engine.world, this.ball)
 		setTimeout(() => {
-			this.init(this.canvas, this.autoCalculate)
+			if (this.autoCalculate) {
+				this.calculatingLaunchSpeed()
+			}
 		}, 50)
+
+		// 如果是固定路径的话，只需要重新设置小球的位置就可以了
+		// Body.setPosition(this.ball, {
+		// 	x: boxSize.width - borderWidth - launchContainerWidth / 2,
+		// 	y: boxSize.height - ballRadius - borderWidth - Math.abs(this.springHeight) - borderWidth
+		// })
 	}
 
 	renderSpeed = () => {
@@ -198,8 +251,11 @@ class LuckyBall {
 	init = (canvas: HTMLCanvasElement, autoRun = false) => {
 		this.canvas = canvas
 		this.isRunning = false
-		this.ball = this.renderBall()
+		this.ball = this.drawBall()
 		this.engine = Engine.create()
+
+		// 类似于慢动作播放，<1 为慢动作， >1 为快动作，但会影响结果
+		// this.engine.timing.timeScale = 0.1
 
 		// 创建渲染器，并将引擎连接到画布上
 		this.render = Render.create({
@@ -213,17 +269,14 @@ class LuckyBall {
 			bounds: this.bounds
 		})
 
-		Events.on(this.render, 'afterRender', this.renderSpeed)
-
 		// 将所有物体添加到世界中
 		this.composite = Composite.add(this.engine.world, [
 			this.ball,
-			this.renderSpringCap(),
-			this.renderDangban(),
-			...this.renderBound(),
-			...this.renderPrizeDivider(),
-			...this.renderPrize(),
-			...this.renderObstacle()
+			this.drawSpringCap(),
+			...this.drawBound(),
+			...this.drawPrizeDivider(),
+			...this.drawPrize(),
+			...this.drawObstacle()
 		])
 
 		// 执行渲染操作
@@ -240,12 +293,13 @@ class LuckyBall {
 		Runner.run(this.runner, this.engine)
 
 		if (autoRun) {
+			Events.on(this.render, 'afterRender', this.renderSpeed)
 			this.calculatingLaunchSpeed()
 		}
 	}
 
 	// 初始化小球
-	renderBall = () => {
+	drawBall = () => {
 		const ball = Bodies.circle(
 			boxSize.width - borderWidth - launchContainerWidth / 2,
 			boxSize.height - ballRadius - borderWidth - Math.abs(this.springHeight) - borderWidth,
@@ -253,8 +307,8 @@ class LuckyBall {
 			{
 				label: 'ball',
 				isStatic: true,
-				restitution: 0.5,
-				mass: 50,
+				restitution: 0.7,
+				mass: 1,
 				render: {
 					fillStyle: 'pink'
 				}
@@ -264,7 +318,7 @@ class LuckyBall {
 	}
 
 	// 初始化小球初始位置下的挡板
-	renderSpringCap = () => {
+	drawSpringCap = () => {
 		const cap = Bodies.rectangle(
 			boxSize.width - borderWidth - launchContainerWidth / 2,
 			boxSize.height - borderWidth - Math.abs(this.springHeight) - borderWidth / 2,
@@ -281,35 +335,23 @@ class LuckyBall {
 		return cap
 	}
 
-	renderDangban = () => {
-		const dangban = Bodies.fromVertices(
-			boxSize.width - 6,
-			6,
-			[
-				[
-					{ x: 0, y: 0 },
-					{ x: 18, y: 0 },
-					{ x: 18, y: 18 }
-				]
-			],
-			{
-				label: 'dangban',
-				isStatic: true,
-				render: {
-					fillStyle: 'orange'
-				}
-			}
-		)
-		return dangban
-	}
-
 	// 初始化边界
-	renderBound = () => {
+	drawBound = () => {
 		const boundTop = Bodies.rectangle(boxSize.width / 2, borderWidth / 2, boxSize.width, borderWidth, {
 			label: 'boundTop',
 			isStatic: true,
 			render: {
 				fillStyle: 'red'
+			}
+		})
+		const dangban = Bodies.rectangle(boxSize.width - borderWidth, borderWidth, 22, 22, {
+			label: 'boundDangban',
+			angle: (45 * Math.PI) / 180,
+			isStatic: true,
+			isSleeping: true,
+			render: {
+				fillStyle: 'orange'
+				// visible: false
 			}
 		})
 		const boundBottom = Bodies.rectangle(
@@ -359,11 +401,11 @@ class LuckyBall {
 			}
 		)
 
-		return [boundTop, boundBottom, boundLeft, boundRight, boundLaunch]
+		return [boundTop, dangban, boundBottom, boundLeft, boundRight, boundLaunch]
 	}
 
 	// 初始化奖品间隔挡板
-	renderPrizeDivider = () => {
+	drawPrizeDivider = () => {
 		const divider = []
 		const margin = prizeWidth
 		let x = borderWidth + margin + borderWidth / 2
@@ -383,16 +425,16 @@ class LuckyBall {
 	}
 
 	// 初始化小球圆柱障碍物
-	renderObstacle = () => {
+	drawObstacle = () => {
 		const obstacle = []
-		const marginX = (boxSize.width - launchContainerWidth) / (obstacleColNum + 1)
-		const marginY = (boxSize.height - prizeHeight) / (obstacleHorNum + 1)
+		const marginX = (boxSize.width - launchContainerWidth) / (obstacleCols + 1)
+		const marginY = (boxSize.height - prizeHeight) / (obstacleRows + 1)
 		let x = 0,
 			y = 0
-		for (let i = 0; i < obstacleHorNum; i++) {
+		for (let i = 0; i < obstacleRows; i++) {
 			x = i % 2 === 0 ? -marginX / 3 + obstacleRadius : obstacleRadius
 			y += marginY
-			for (let j = 0; j < obstacleColNum; j++) {
+			for (let j = 0; j < obstacleCols; j++) {
 				x += marginX
 				obstacle.push(
 					Bodies.circle(x, y, obstacleRadius, {
@@ -406,7 +448,7 @@ class LuckyBall {
 	}
 
 	// 初始化奖品底板
-	renderPrize = () => {
+	drawPrize = () => {
 		const prizeGround = []
 		const margin = prizeWidth
 		let x = borderWidth + margin / 2
@@ -425,4 +467,4 @@ class LuckyBall {
 	}
 }
 
-export default LuckyBall
+export default Plinko
