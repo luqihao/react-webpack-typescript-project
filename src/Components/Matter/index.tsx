@@ -38,8 +38,8 @@ const getSpringHeight = (angle: number) => {
 }
 
 const arr = [
-	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -82,16 +82,15 @@ const Matter = () => {
 		plinko.current = new Plinko({ springHeight: getSpringHeight(springFlexMaxAngle) })
 		plinko.current.init(document.getElementById('canvas') as HTMLCanvasElement, false)
 
-		// arr.forEach((v, i) => {
-		// 	v.forEach((_, ii) => {
-		// 		console.log(-12 - ii * 0.1 - i)
-		// 		const luck = new Plinko({
-		// 			springHeight: getSpringHeight(springFlexMaxAngle),
-		// 			calculateY: -13 - ii * 0.1 - i
-		// 		})
-		// 		luck.init(document.getElementById(`canvas${i.toString() + ii.toString()}`) as HTMLCanvasElement, false)
-		// 	})
-		// })
+		arr.forEach((v, i) => {
+			v.forEach((_, ii) => {
+				const luck = new Plinko({
+					springHeight: getSpringHeight(springFlexMaxAngle),
+					calculateY: -13 - ii * 0.1 - i
+				})
+				luck.init(document.getElementById(`canvas${i.toString() + ii.toString()}`) as HTMLCanvasElement, true)
+			})
+		})
 		return () => {
 			clear?.()
 		}

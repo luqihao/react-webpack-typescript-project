@@ -1,8 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { Engine, Render, Events, Bodies, Body, Composite, Runner, Bounds, Vector } from 'matter-js'
 
-import { prize4, prize5 } from './ballPosRecord'
-
 // 容器宽高
 export const boxSize = {
 	width: 200,
@@ -13,7 +11,7 @@ export const borderWidth = 1
 // 小球半径
 const ballRadius = 6
 // 障碍物圆柱半径
-const obstacleRadius = 6
+const obstacleRadius = 4
 // 障碍物圆柱渲染多少层
 const obstacleRows = 4
 // 障碍物圆柱渲染多少列
@@ -79,7 +77,9 @@ class Plinko {
 	calculatingLaunchSpeed = async () => {
 		this.autoCalculate = true
 		if (this.calculateY.isGreaterThanOrEqualTo(this.max)) {
-			this.gameStart({ y: this.calculateY.toNumber() })
+			setTimeout(() => {
+				this.gameStart({ y: this.calculateY.toNumber() })
+			}, 1000)
 		} else {
 			console.log('this.calculatingLaunchSpeedResult', this.calculatingLaunchSpeedResult)
 			const obj = {}
@@ -97,7 +97,6 @@ class Plinko {
 			this.max = this.calculateY.plus(1)
 			this.autoCalculate = false
 			this.calculatingLaunchSpeedResult = {}
-			return
 		}
 	}
 
@@ -134,9 +133,7 @@ class Plinko {
 				this.setCalculateResult(value)
 				this.continueCalculate()
 				console.log(`小球与${value}碰撞`)
-				setTimeout(() => {
-					this.reset()
-				}, 2000)
+				this.reset()
 			} else if (
 				['ball', 'springCap'].some(v => pair.bodyA.label.includes(v)) &&
 				['ball', 'springCap'].some(v => pair.bodyB.label.includes(v))
@@ -144,9 +141,7 @@ class Plinko {
 				this.setCalculateResult(`游戏失败`)
 				this.continueCalculate()
 				console.log(`游戏失败，此时速度为${this.calculateY}`)
-				setTimeout(() => {
-					this.reset()
-				}, 2000)
+				this.reset()
 			}
 		}
 	}
@@ -175,7 +170,7 @@ class Plinko {
 	}
 
 	// 开始游戏
-	gameStart = async ({ record, prize, y = -13.52 }: { record?: Vector[]; prize?: number; y?: number }) => {
+	gameStart = async ({ record, prize, y = -13 }: { record?: Vector[]; prize?: number; y?: number }) => {
 		if (this.isRunning) {
 			return
 		}
@@ -202,35 +197,35 @@ class Plinko {
 
 	// 重置游戏
 	reset = () => {
-		console.log('重置游戏', JSON.stringify(this.ballPosList))
+		console.log('重置游戏')
 		this.ballPosList = []
 		// 第一种重置，整个canvas重新初始化
-		// Events.off(this.engine, 'collisionStart', this.handleGameEnd)
-		// Events.off(this.engine, 'beforeUpdate', this.handleBallOverBound)
-		// Events.off(this.render, 'afterRender', this.renderSpeed)
-		// Render.stop(this.render)
-		// Runner.stop(this.runner)
-		// Engine.clear(this.engine)
-		// Composite.clear(this.composite, true)
-		// this.ball = null
-		// this.engine = null
-		// this.render = null
-		// this.runner = null
-		// this.isRunning = false
-		// setTimeout(() => {
-		// 	this.init(this.canvas, this.autoCalculate)
-		// }, 50)
+		Events.off(this.engine, 'collisionStart', this.handleGameEnd)
+		Events.off(this.engine, 'beforeUpdate', this.handleBallOverBound)
+		Events.off(this.render, 'afterRender', this.renderSpeed)
+		Render.stop(this.render)
+		Runner.stop(this.runner)
+		Engine.clear(this.engine)
+		Composite.clear(this.composite, true)
+		this.ball = null
+		this.engine = null
+		this.render = null
+		this.runner = null
+		this.isRunning = false
+		setTimeout(() => {
+			this.init(this.canvas, this.autoCalculate)
+		}, 50)
 
 		// 第二种重置，删除旧的小球，新建新的小球
-		this.isRunning = false
-		Composite.remove(this.composite, this.ball)
-		this.ball = this.drawBall()
-		Composite.add(this.engine.world, this.ball)
-		setTimeout(() => {
-			if (this.autoCalculate) {
-				this.calculatingLaunchSpeed()
-			}
-		}, 50)
+		// this.isRunning = false
+		// Composite.remove(this.composite, this.ball)
+		// this.ball = this.drawBall()
+		// Composite.add(this.engine.world, this.ball)
+		// setTimeout(() => {
+		// 	if (this.autoCalculate) {
+		// 		this.calculatingLaunchSpeed()
+		// 	}
+		// }, 50)
 
 		// 如果是固定路径的话，只需要重新设置小球的位置就可以了
 		// Body.setPosition(this.ball, {
@@ -292,8 +287,8 @@ class Plinko {
 		// 运行渲染器
 		Runner.run(this.runner, this.engine)
 
+		Events.on(this.render, 'afterRender', this.renderSpeed)
 		if (autoRun) {
-			Events.on(this.render, 'afterRender', this.renderSpeed)
 			this.calculatingLaunchSpeed()
 		}
 	}
@@ -307,8 +302,8 @@ class Plinko {
 			{
 				label: 'ball',
 				isStatic: true,
-				restitution: 0.7,
-				mass: 1,
+				restitution: 0.5,
+				mass: 50,
 				render: {
 					fillStyle: 'pink'
 				}
