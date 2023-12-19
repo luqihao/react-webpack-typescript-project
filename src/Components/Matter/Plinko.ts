@@ -132,7 +132,7 @@ class Plinko {
 				const value = pair.bodyA.label === 'ball' ? pair.bodyB.label : pair.bodyA.label
 				this.setCalculateResult(value)
 				this.continueCalculate()
-				console.log(`小球与${value}碰撞`)
+				console.log(`小球与${value}碰撞，此时速度为${this.calculateY}`)
 				this.reset()
 			} else if (
 				['ball', 'springCap'].some(v => pair.bodyA.label.includes(v)) &&
@@ -141,6 +141,14 @@ class Plinko {
 				this.setCalculateResult(`游戏失败`)
 				this.continueCalculate()
 				console.log(`游戏失败，此时速度为${this.calculateY}`)
+				this.reset()
+			} else if (
+				['ball', 'boundSpring'].some(v => pair.bodyA.label.includes(v)) &&
+				['ball', 'boundSpring'].some(v => pair.bodyB.label.includes(v))
+			) {
+				this.setCalculateResult(`游戏异常`)
+				this.continueCalculate()
+				console.log(`游戏异常，此时速度为${this.calculateY}`)
 				this.reset()
 			}
 		}
@@ -197,7 +205,7 @@ class Plinko {
 
 	// 重置游戏
 	reset = () => {
-		console.log('重置游戏')
+		// console.log('重置游戏')
 		this.ballPosList = []
 		// 第一种重置，整个canvas重新初始化
 		Events.off(this.engine, 'collisionStart', this.handleGameEnd)
@@ -349,6 +357,19 @@ class Plinko {
 				// visible: false
 			}
 		})
+		const boundSpring = Bodies.rectangle(
+			boxSize.width - borderWidth - launchContainerWidth / 2,
+			boxSize.height - borderWidth / 2,
+			launchContainerWidth,
+			borderWidth,
+			{
+				label: 'boundSpring',
+				isStatic: true,
+				render: {
+					fillStyle: 'gray'
+				}
+			}
+		)
 		const boundBottom = Bodies.rectangle(
 			boxSize.width / 2,
 			boxSize.height - borderWidth / 2,
@@ -396,7 +417,7 @@ class Plinko {
 			}
 		)
 
-		return [boundTop, dangban, boundBottom, boundLeft, boundRight, boundLaunch]
+		return [boundTop, dangban, boundBottom, boundLeft, boundRight, boundLaunch, boundSpring]
 	}
 
 	// 初始化奖品间隔挡板
