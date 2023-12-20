@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useInterval } from 'ahooks'
+import { Button } from 'antd'
 
 import styles from './index.module.scss'
 import Plinko, { boxSize, borderWidth, launchContainerWidth, prizeList, prizeWidth } from './Plinko'
 import prizeRecord from './ballPosRecord'
-import { Button } from 'antd'
+import prizeSpeed from './prizeSpeed'
 
 // 弹簧条数
 const springLines = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
@@ -38,8 +39,8 @@ const getSpringHeight = (angle: number) => {
 }
 
 const arr = [
-	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-	[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 	// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -51,6 +52,10 @@ const Matter = () => {
 	const [isPress, setIsPress] = useState(false)
 	const [angle, setAngle] = useState(springFlexMaxAngle)
 	const [current, setCurrent] = useState(-1)
+
+	const strengthWidth = useMemo(() => {
+		return (Math.abs(springFlexMaxAngle) - Math.abs(angle)) * (1 / Math.abs(springFlexMaxAngle)) * 100
+	}, [angle])
 
 	const clear = useInterval(
 		() => {
@@ -70,15 +75,31 @@ const Matter = () => {
 		if (!isPress || plinko.current.isRunning) {
 			return
 		}
+		if (current > -1) {
+			// const list = Object.values(prizeSpeed)[current]
+			// const len = list.length
+			// const every = Math.floor(len / 100)
+			// const childList = list.slice(Math.floor(strengthWidth) * every, Math.floor(strengthWidth) * every + every)
+			const childList = Object.values(prizeSpeed)[current][Math.floor(strengthWidth)]
+			const randomIndex = Math.floor(Math.random() * childList.length)
+			const strength = childList[randomIndex]
+			console.log('strength', strength, Math.floor(strengthWidth), childList)
+			plinko.current.gameStart({
+				y: strength
+			})
+		} else {
+			plinko.current.gameStart({})
+		}
 		setAngle(springFlexMaxAngle)
 		setIsPress(false)
-		plinko.current.gameStart({
-			record: current > -1 ? prizeRecord[current] : undefined,
-			prize: current > -1 ? current + 1 : undefined
-		})
+		// plinko.current.gameStart({
+		// 	record: current > -1 ? prizeRecord[current] : undefined,
+		// 	prize: current > -1 ? current + 1 : undefined
+		// })
 	}
 
 	useEffect(() => {
+		console.log('prizeSpeed', prizeSpeed)
 		plinko.current = new Plinko({ springHeight: getSpringHeight(springFlexMaxAngle) })
 		plinko.current.init(document.getElementById('canvas') as HTMLCanvasElement, false)
 
@@ -130,9 +151,7 @@ const Matter = () => {
 				<div
 					className={styles['press-bg']}
 					style={{
-						width: `${
-							(Math.abs(springFlexMaxAngle) - Math.abs(angle)) * (1 / Math.abs(springFlexMaxAngle)) * 100
-						}%`
+						width: `${strengthWidth}%`
 					}}
 				></div>
 			</div>
